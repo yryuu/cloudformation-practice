@@ -1,0 +1,61 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Create EC2"
+# ------------------------------------------------------------#
+# Input Parameters
+# ------------------------------------------------------------#
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Parameters:
+          - SystemName
+          - EnvType
+          - ImageID
+          - EC2KeyPair
+          - BaseNetworkStackName
+Parameters:
+  SystemName:
+    Description: Please type the SystemName.
+    Type: String
+    Default: Sample
+  EnvType:
+    Description: Please Select Environment Type.
+    Type: String
+    Default: prd
+    AllowedValues:
+      - stg
+      - prd
+  ImageID:
+    Description: Please type the EC2 image ID.
+    Type: String
+    Default: ami-0a1c2ec61571737db # Amazon Linux 2 AMI
+  EC2KeyPair:
+    Description: Please Select EC2 key name.
+    Type: AWS::EC2::KeyPair::KeyName
+  BaseNetworkStackName:
+    Description: Please type the BaseNetwork stack name.
+    Type: String
+    Default: mynetwork1
+Resources:
+  # ------------------------------------------------------------#
+  # EC2
+  # ------------------------------------------------------------#
+  MyEC2:
+    Type: "AWS::EC2::Instance"
+    Properties:
+      AvailabilityZone: ap-northeast-1a
+      ImageId: !Sub ${ImageID}
+      InstanceType: m4.large
+      KeyName: !Sub ${EC2KeyPair}
+      BlockDeviceMappings:
+        - DeviceName: /dev/xvda
+          Ebs:
+            VolumeType: gp2
+            VolumeSize: 20
+      SubnetId:
+        {
+          "Fn::ImportValue":
+            !Join ["-", ["Ref": "BaseNetworkStackName", "MySubnet01"]],
+        }
+      Tags:
+        - Key: Name
+          Value: !Sub ${SystemName}-${EnvType}-ec2

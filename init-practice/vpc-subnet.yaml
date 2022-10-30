@@ -1,0 +1,75 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Create BaseNetwork"
+# ------------------------------------------------------------#
+# Input Parameters
+# ------------------------------------------------------------#
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Parameters:
+          - SystemName
+          - EnvType
+Parameters:
+  SystemName:
+    Description: Please type the SystemName.
+    Type: String
+    Default: Sample
+  EnvType:
+    Description: Select Environment Type.
+    Type: String
+    Default: prd
+    AllowedValues:
+      - stg
+      - prd
+  CidrBlock:
+    Description: Please type the CidrBlock.
+    Type: String
+    Default: 10.0.0.0/16
+Resources:
+  # ------------------------------------------------------------#
+  #  VPC
+  # ------------------------------------------------------------#
+  MyVPC:
+    Type: "AWS::EC2::VPC"
+    Properties:
+      CidrBlock: !Sub ${CidrBlock}
+      Tags:
+        - Key: Name
+          Value: !Sub ${SystemName}-${EnvType}-vpc
+  # ------------------------------------------------------------#
+  #  Subnet
+  # ------------------------------------------------------------#
+  MySubnet01:
+    Type: "AWS::EC2::Subnet"
+    Properties:
+      VpcId: !Ref MyVPC
+      AvailabilityZone: ap-northeast-1a
+      CidrBlock: !Select [0, !Cidr [!GetAtt MyVPC.CidrBlock, 1, 8]]
+      Tags:
+        - Key: Name
+          Value: !Sub ${SystemName}-${EnvType}-subnet01
+  MySubnet02:
+    Type: "AWS::EC2::Subnet"
+    Properties:
+      VpcId: !Ref MyVPC
+      AvailabilityZone: ap-northeast-1c
+      CidrBlock: !Select [1, !Cidr [!GetAtt MyVPC.CidrBlock, 2, 8]]
+      Tags:
+        - Key: Name
+          Value: !Sub ${SystemName}-${EnvType}-subnet02
+# ------------------------------------------------------------#
+# Output
+# ------------------------------------------------------------#
+Outputs:
+  MyVPC:
+    Value: !Ref MyVPC
+    Export:
+      Name: !Sub "${AWS::StackName}-MyVPC"
+  MySubnet01:
+    Value: !Ref MySubnet01
+    Export:
+      Name: !Sub "${AWS::StackName}-MySubnet01"
+  MySubnet02:
+    Value: !Ref MySubnet02
+    Export:
+      Name: !Sub "${AWS::StackName}-MySubnet02"
