@@ -32,10 +32,24 @@ custom:
   wsgi:
     app: django_sls_helloworld.wsgi.application
     packRequirements: false
+  apiGateway:
+    binaryMediaTypes:
+      - "multipart/form-data"
 
 provider:
   name: aws
   runtime: python3.9
+
+  iam:
+    role:
+      statements:
+        # Allow functions to read/write objects in a bucket
+        - Effect: Allow
+          Action:
+            - "s3:GetObject"
+            - "s3:PutObject"
+          Resource:
+            - "arn:aws:s3:::s3testbucket20221112/*"
 
 # you can overwrite defaults here
 #  stage: dev
@@ -128,3 +142,4 @@ plugins:
   - serverless-domain-manager
   - serverless-python-requirements
   - serverless-wsgi
+  - serverless-plugin-custom-binary

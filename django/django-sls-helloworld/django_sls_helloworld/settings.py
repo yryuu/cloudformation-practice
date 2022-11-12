@@ -28,12 +28,13 @@ SECRET_KEY = 'django-insecure-)o(bmq#de_ic*n+o$aha)zrfv(sp0zaph@$qt+@pua^t!s%uqc
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["django-sls-helloworld.yryuu-technical2.click"]
+ALLOWED_HOSTS = ["127.0.0.1", "django-sls-helloworld.yryuu-technical2.click"]
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'file_upload',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -76,12 +77,13 @@ WSGI_APPLICATION = 'django_sls_helloworld.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'djangodemo',
-    }
-}
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'djangodemo',
+#     }
+# }
 
 
 # Password validation
